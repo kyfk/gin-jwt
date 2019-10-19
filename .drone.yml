@@ -1,0 +1,42 @@
+kind: pipeline
+name: lint
+
+clone:
+  depth: 50
+
+steps:
+- name: testing
+  image: golang:1.13
+  pull: true
+  commands:
+  - make vet
+  - make lint
+
+trigger:
+  event:
+  - push
+  - pull_request
+
+---
+kind: pipeline
+name: testing
+
+clone:
+  depth: 50
+
+steps:
+- name: testing
+  image: golang:1.13
+  pull: true
+  commands:
+  - make test
+
+- name: codecov
+  image: robertstettner/drone-codecov
+  settings:
+    token:
+      from_secret: codecov_token
+
+trigger:
+  event:
+  - push
