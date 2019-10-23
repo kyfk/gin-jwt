@@ -160,18 +160,13 @@ func (a Auth) VerifyPerm(permitted func(MapClaims) bool) gin.HandlerFunc {
 // in a response header.
 func (a Auth) Authenticate(c *gin.Context) {
 	claims, err := a.Authenticator(c)
-	switch err {
-	case ErrorAuthenticationFailed:
-		c.Set(ErrKey, ErrorAuthenticationFailed)
+	if err != nil {
+		c.Set(ErrKey, err)
 		c.Status(http.StatusUnauthorized)
 		c.Abort()
-	case nil:
-		a.respondAuthorizationHeader(c, claims)
-	default:
-		c.Set(ErrKey, err)
-		c.Status(http.StatusInternalServerError)
-		c.Abort()
+		return
 	}
+	a.respondAuthorizationHeader(c, claims)
 }
 
 // RefreshToken can be used to refresh a token. The token still needs to be valid on refresh.
