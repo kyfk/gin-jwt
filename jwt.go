@@ -85,9 +85,9 @@ type Auth struct {
 	SecretKey []byte
 	// Authenticator authenticates a request and return jwt.MapClaims
 	// that contains a user information of the request.
-	Authenticator func(c *gin.Context) (MapClaims, error)
+	Authenticator func(*gin.Context) (MapClaims, error)
 	// UserFetcher takes a jwt.MapClaims and return a user object.
-	UserFetcher func(MapClaims) (interface{}, error)
+	UserFetcher func(*gin.Context, MapClaims) (interface{}, error)
 
 	// this is for testing.
 	nowFunc func() time.Time
@@ -135,7 +135,7 @@ func (a Auth) VerifyPerm(permitted func(MapClaims) bool) gin.HandlerFunc {
 			return
 		}
 
-		u, err := a.UserFetcher(claims)
+		u, err := a.UserFetcher(c, claims)
 		if err != nil {
 			c.Set(ErrKey, err)
 			c.Status(http.StatusInternalServerError)

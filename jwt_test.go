@@ -90,7 +90,7 @@ func NewTestAuth() (Auth, error) {
 				"role":     u.Role,
 			}, nil
 		},
-		UserFetcher: func(claims MapClaims) (interface{}, error) {
+		UserFetcher: func(c *gin.Context, claims MapClaims) (interface{}, error) {
 			username, ok := claims["username"].(string)
 			if !ok {
 				return nil, errors.New("data inconsistency occurred")
@@ -261,7 +261,7 @@ func TestNew(t *testing.T) {
 		assert.Error(err)
 	})
 
-	auth.UserFetcher = func(MapClaims) (interface{}, error) { return nil, nil }
+	auth.UserFetcher = func(*gin.Context, MapClaims) (interface{}, error) { return nil, nil }
 
 	t.Run("default values set correctly", func(t *testing.T) {
 		a, err := New(auth)
@@ -353,7 +353,7 @@ func TestVerifyPerm(t *testing.T) {
 		c := newContext(header)
 
 		expectedErr := errors.New("error")
-		auth.UserFetcher = func(MapClaims) (interface{}, error) { return nil, expectedErr }
+		auth.UserFetcher = func(*gin.Context, MapClaims) (interface{}, error) { return nil, expectedErr }
 		auth.VerifyPerm(func(MapClaims) bool { return true })(c)
 
 		_, ok := c.Get(PayloadKey)
@@ -371,7 +371,7 @@ func TestVerifyPerm(t *testing.T) {
 
 		c := newContext(header)
 
-		auth.UserFetcher = func(MapClaims) (interface{}, error) { return nil, nil }
+		auth.UserFetcher = func(*gin.Context, MapClaims) (interface{}, error) { return nil, nil }
 		auth.VerifyPerm(func(MapClaims) bool { return true })(c)
 
 		_, ok := c.Get(PayloadKey)
@@ -389,7 +389,7 @@ func TestVerifyPerm(t *testing.T) {
 
 		c := newContext(header)
 
-		auth.UserFetcher = func(MapClaims) (interface{}, error) { return nil, nil }
+		auth.UserFetcher = func(*gin.Context, MapClaims) (interface{}, error) { return nil, nil }
 		auth.VerifyPerm(func(MapClaims) bool { return true })(c)
 
 		_, ok := c.Get(PayloadKey)
@@ -408,7 +408,7 @@ func TestVerifyPerm(t *testing.T) {
 		c := newContext(header)
 
 		user := &TestUser{}
-		auth.UserFetcher = func(MapClaims) (interface{}, error) { return user, nil }
+		auth.UserFetcher = func(*gin.Context, MapClaims) (interface{}, error) { return user, nil }
 		auth.VerifyPerm(func(MapClaims) bool { return true })(c)
 
 		assert.Nil(Error(c))

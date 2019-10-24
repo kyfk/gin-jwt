@@ -53,7 +53,7 @@ func main() {
         },
 
         // UserFetcher takes a jwt.MapClaims and return a user object.
-        UserFetcher: func(claims jwt.MapClaims) (interface{}, error) {
+        UserFetcher: func(c *gin.Context, claims jwt.MapClaims) (interface{}, error) {
             username, ok := claims["username"].(string)
             if !ok {
                 return nil, nil

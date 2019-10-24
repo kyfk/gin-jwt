@@ -85,7 +85,7 @@ func NewAuth() (jwt.Auth, error) {
 				"role":     u.Role,
 			}, nil
 		},
-		UserFetcher: func(claims jwt.MapClaims) (interface{}, error) {
+		UserFetcher: func(c *gin.Context, claims jwt.MapClaims) (interface{}, error) {
 			username, ok := claims["username"].(string)
 			if !ok {
 				return nil, nil
