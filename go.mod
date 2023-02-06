@@ -8,5 +8,5 @@ require (
 	github.com/gin-gonic/gin v1.4.0
 	github.com/pkg/errors v0.8.2-0.20190227000051-27936f6d90f9
 	github.com/stretchr/testify v1.3.0
-	github.com/tidwall/gjson v1.3.2 // indirect
+	github.com/tidwall/gjson v1.9.3 // indirect
 )
